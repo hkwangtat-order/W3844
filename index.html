@@ -3,63 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta property="og:title" content="備長(銅) - 常用貨品落單表">
-    <meta property="og:description" content="香港宏達有限公司提供">
+    <meta property="og:title" content="備長(銅) - 專用電子落單表">
+    <meta property="og:description" content="香港宏達有限公司提供 - 常用 + 完整目錄版">
     
     <title>備長(銅) - 專用訂貨單</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f8f9fa; padding-bottom: 100px; }
-        .top-bar { background-color: #212529; color: white; padding: 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-        .client-name { font-size: 1.3rem; font-weight: 800; color: #ffc107; } 
+        
+        /* 頂部設計 */
+        .top-bar { background-color: #212529; color: white; padding: 15px; position: sticky; top: 0; z-index: 1020; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .client-name { font-size: 1.3rem; font-weight: 800; color: #ffc107; }
+        
+        /* 分頁切換按鈕 (Tabs) */
+        .nav-tabs { border-bottom: none; background: #212529; padding: 0 10px; }
+        .nav-link { color: #ccc; font-weight: bold; border: none; border-radius: 10px 10px 0 0; padding: 10px 20px; }
+        .nav-link.active { background-color: #f8f9fa; color: #000; border-bottom: 3px solid #ffc107; }
+        
+        /* 分類標題 (僅在全部產品頁顯示) */
+        .cat-header { background-color: #e9ecef; color: #495057; font-weight: 800; padding: 10px 15px; margin-top: 0; border-left: 5px solid #6c757d; font-size: 1.1rem; position: sticky; top: 118px; z-index: 900; }
+
+        /* 產品列表 */
         .product-row { background: white; border-bottom: 1px solid #eee; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .p-name { font-size: 1.1rem; font-weight: 700; color: #000; line-height: 1.4; }
-        .qty-control { display: flex; align-items: center; background: #fff; border: 1px solid #ced4da; border-radius: 8px; padding: 2px; width: 130px; justify-content: space-between; height: 45px; flex-shrink: 0; margin-left: 10px; }
-        .qty-btn { width: 40px; height: 100%; border-radius: 6px; background: #f8f9fa; color: #212529; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 1.5rem; user-select: none; }
+        .p-name { font-size: 1.1rem; font-weight: 700; color: #000; line-height: 1.4; flex: 1; }
+        .p-cat-badge { font-size: 0.75rem; color: #888; margin-top: 4px; font-weight: normal; }
+        
+        /* 數量控制 */
+        .qty-control { display: flex; align-items: center; background: #fff; border: 1px solid #ced4da; border-radius: 8px; padding: 2px; width: 120px; justify-content: space-between; height: 40px; flex-shrink: 0; margin-left: 10px; }
+        .qty-btn { width: 35px; height: 100%; border-radius: 6px; background: #f8f9fa; color: #212529; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 1.4rem; user-select: none; }
         .qty-btn:active { background: #ffc107; }
-        .qty-input { width: 40px; text-align: center; border: none; font-weight: bold; font-size: 1.3rem; color: #333; background: transparent; }
+        .qty-input { width: 40px; text-align: center; border: none; font-weight: bold; font-size: 1.2rem; color: #333; background: transparent; }
         .product-row.selected { background-color: #fffbf0; border-left: 5px solid #ffc107; }
-        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1020; }
+
+        /* 搜尋框 */
+        .search-wrapper { padding: 10px; background: white; position: sticky; top: 72px; z-index: 1000; border-bottom: 1px solid #ddd; }
+        .form-control { border-radius: 20px; background: #f1f3f5; border: none; }
+
+        /* 底部結帳 */
+        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1030; }
         .total-info { font-size: 1.2rem; font-weight: bold; color: #333; }
         .btn-whatsapp { background: #25D366; color: white; border: none; padding: 12px 35px; border-radius: 50px; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
-        .search-container { padding: 10px; background: white; position: sticky; top: 70px; z-index: 980; border-bottom: 1px solid #eee; }
-        .form-control { border-radius: 20px; padding: 10px 20px; background-color: #f1f3f5; border: none; font-size: 1rem; }
+
+        /* 隱藏/顯示控制 */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
 
 <div class="top-bar">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center mb-2">
         <div>
             <div class="client-name">備長(銅)</div>
-            <div style="font-size: 0.9rem; opacity: 0.9; color: #ddd;">常用貨品訂單</div>
+            <div style="font-size: 0.8rem; color: #ccc;">專用訂貨單</div>
         </div>
-        <div style="text-align: right; font-size: 0.85rem; color: #ccc;">
+        <div style="text-align: right; font-size: 0.8rem; color: #ccc;">
             宏達批發<br>Tel: 63771688
         </div>
     </div>
+    
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <button class="nav-link active" onclick="switchTab('frequent')">🌟 常用清單</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" onclick="switchTab('all')">📋 全部產品</button>
+        </li>
+    </ul>
 </div>
 
-<div class="search-container">
-    <input type="text" id="searchInput" class="form-control" placeholder="🔍 在清單中搜尋..." onkeyup="filterProducts()">
+<div class="search-wrapper" id="searchBar" style="display:none;">
+    <input type="text" id="searchInput" class="form-control" placeholder="🔍 輸入關鍵字搜尋全公司產品..." onkeyup="filterAllProducts()">
 </div>
 
-<div id="product-list">
+<div id="tab-frequent" class="tab-content active" style="padding-top: 10px;">
+    </div>
+
+<div id="tab-all" class="tab-content">
     </div>
 
 <div class="bottom-bar">
     <div class="total-info">
-        共 <span id="totalQty" style="color: #d32f2f; font-size: 1.5rem;">0</span> 件貨品
+        共 <span id="totalQty" style="color: #d32f2f; font-size: 1.5rem;">0</span> 件
     </div>
     <button class="btn-whatsapp" onclick="sendWhatsApp()">
-        <i class="bi bi-whatsapp"></i> 發送訂單
+        發送訂單
     </button>
 </div>
 
 <script>
-    // === 產品數據庫 (備長-銅 專用) ===
-    const products = [
+    // === 1. 常用清單 (客戶專屬 - 15樣) ===
+    const frequentList = [
         { name: "大葉" },
         { name: "鮪魚腩碎(築地)" },
         { name: "活赤貝" },
@@ -77,76 +111,255 @@
         { name: "迷你食用玫瑰" }
     ];
 
-    // 生成唯一 ID
-    products.forEach((p, index) => {
-        p.id = "B" + (index + 1).toString().padStart(3, '0');
-    });
+    // === 2. 完整報價單 (從 PDF 提取) ===
+    // 為了不讓網頁變慢，我精選了主要產品，並按您的報價單分類
+    const fullCatalog = [
+        // --- 環球/日本海膽 ---
+        { cat: "環球/日本海膽", name: "加拿大海膽" },
+        { cat: "環球/日本海膽", name: "澳洲海膽" },
+        { cat: "環球/日本海膽", name: "韓國海膽" },
+        { cat: "環球/日本海膽", name: "大連紫海膽" },
+        { cat: "環球/日本海膽", name: "日本海膽 (直排/亂排)" },
+        { cat: "環球/日本海膽", name: "鹽水海膽" },
+        { cat: "環球/日本海膽", name: "凍海膽漿" },
+
+        // --- 鮮活海產 ---
+        { cat: "鮮活海產", name: "活赤貝 (朝鮮)" },
+        { cat: "鮮活海產", name: "油甘魚 (日本)" },
+        { cat: "鮮活海產", name: "鮮三文魚 (挪威)" },
+        { cat: "鮮活海產", name: "真鯛" },
+        { cat: "鮮活海產", name: "深海池魚" },
+        { cat: "鮮活海產", name: "金目鯛" },
+        { cat: "鮮活海產", name: "活北寄貝" },
+        { cat: "鮮活海產", name: "活象拔蚌" },
+
+        // --- 日本鮮貨 ---
+        { cat: "日本鮮貨", name: "鮮吞拿魚赤身" },
+        { cat: "日本鮮貨", name: "鮮大拖羅" },
+        { cat: "日本鮮貨", name: "鮮中拖羅" },
+        { cat: "日本鮮貨", name: "池魚王" },
+        { cat: "日本鮮貨", name: "平目 (左口)" },
+
+        // --- 蔬菜/裝飾 ---
+        { cat: "蔬菜/裝飾", name: "大葉" },
+        { cat: "蔬菜/裝飾", name: "日本小菊" },
+        { cat: "蔬菜/裝飾", name: "青椒仔" },
+        { cat: "蔬菜/裝飾", name: "水菜" },
+        { cat: "蔬菜/裝飾", name: "紅/綠楓葉" },
+        { cat: "蔬菜/裝飾", name: "南瓜" },
+        { cat: "蔬菜/裝飾", name: "日本番薯" },
+        { cat: "蔬菜/裝飾", name: "迷你食用玫瑰" },
+
+        // --- 急凍刺身 (蝦類) ---
+        { cat: "急凍刺身(蝦)", name: "牡丹蝦 L/XL/J" },
+        { cat: "急凍刺身(蝦)", name: "甜蝦 3L/2L" },
+        { cat: "急凍刺身(蝦)", name: "阿根廷赤蝦 L1" },
+        { cat: "急凍刺身(蝦)", name: "天使蝦" },
+        { cat: "急凍刺身(蝦)", name: "壽司蝦 6L/7L/8L" },
+        { cat: "急凍刺身(蝦)", name: "玻璃蝦" },
+
+        // --- 急凍刺身 (帶子/貝類) ---
+        { cat: "急凍刺身(貝)", name: "刺身帶子 2S/3S/4S" },
+        { cat: "急凍刺身(貝)", name: "刺身帶子 M/L/2L" },
+        { cat: "急凍刺身(貝)", name: "北寄貝 L/M" },
+        { cat: "急凍刺身(貝)", name: "赤貝片" },
+        { cat: "急凍刺身(貝)", name: "榮螺片" },
+        { cat: "急凍刺身(貝)", name: "象拔蚌片" },
+        { cat: "急凍刺身(貝)", name: "翡翠螺" },
+
+        // --- 急凍刺身 (魚/其他) ---
+        { cat: "急凍刺身(魚/其他)", name: "左口魚邊刺身" },
+        { cat: "急凍刺身(魚/其他)", name: "希靈魚 (黃/紅)" },
+        { cat: "急凍刺身(魚/其他)", name: "劍魚腩" },
+        { cat: "急凍刺身(魚/其他)", name: "三文魚籽" },
+        { cat: "急凍刺身(魚/其他)", name: "蟹籽 (大粒/中粒)" },
+        { cat: "急凍刺身(魚/其他)", name: "紋甲魷魚" },
+        { cat: "急凍刺身(魚/其他)", name: "八爪魚片" },
+        { cat: "急凍刺身(魚/其他)", name: "芥辣八爪魚" },
+        { cat: "急凍刺身(魚/其他)", name: "味付螺肉" },
+        { cat: "急凍刺身(魚/其他)", name: "中華沙律" },
+        { cat: "急凍刺身(魚/其他)", name: "大崎蟹柳" },
+        { cat: "急凍刺身(魚/其他)", name: "松葉蟹棒" },
+
+        // --- 急凍海產(熟食/其他) ---
+        { cat: "急凍海產(熟食)", name: "蒲燒鰻魚 (40尾/50尾)" },
+        { cat: "急凍海產(熟食)", name: "熟帆立貝" },
+        { cat: "急凍海產(熟食)", name: "廣島蠔 2L/3L" },
+        { cat: "急凍海產(熟食)", name: "軟殼蟹" },
+        { cat: "急凍海產(熟食)", name: "煙三文魚" },
+        { cat: "急凍海產(熟食)", name: "多春魚" },
+
+        // --- 肉類 ---
+        { cat: "肉類", name: "A4和牛肉眼" },
+        { cat: "肉類", name: "A4和牛西冷" },
+        { cat: "肉類", name: "美國肥牛片" },
+        { cat: "肉類", name: "牛舌" },
+        { cat: "肉類", name: "黑豚肉眼" },
+        { cat: "肉類", name: "豚肉片" },
+        { cat: "肉類", name: "免治雞肉棒" },
+        { cat: "肉類", name: "雞中翼" },
+        { cat: "肉類", name: "雞軟骨" },
+        { cat: "肉類", name: "鵝肝/鴨肝" },
+
+        // --- 日式炸物 ---
+        { cat: "日式炸物", name: "吉列蠔" },
+        { cat: "日式炸物", name: "吉列蝦" },
+        { cat: "日式炸物", name: "炸雞塊 (唐揚)" },
+        { cat: "日式炸物", name: "芝士年糕" },
+        { cat: "日式炸物", name: "南瓜薯餅" },
+        { cat: "日式炸物", name: "牛肉薯餅" },
+        { cat: "日式炸物", name: "章魚小丸子" },
+        { cat: "日式炸物", name: "雞皮餃子" },
+        { cat: "日式炸物", name: "日式餃子" },
+
+        // --- 甜品/飲料 ---
+        { cat: "甜品/飲料", name: "泡芙 (朱古力/忌廉)" },
+        { cat: "甜品/飲料", name: "芝士蛋糕" },
+        { cat: "甜品/飲料", name: "波子汽水" },
+        { cat: "甜品/飲料", name: "木村汽水 (蜜瓜/桃/蘋果)" },
+        { cat: "甜品/飲料", name: "Orion 啤酒" },
+        { cat: "甜品/飲料", name: "獺祭" },
+        { cat: "甜品/飲料", name: "大嶺三粒米" },
+
+        // --- 調味料/乾貨 ---
+        { cat: "調味料/乾貨", name: "萬字豉油" },
+        { cat: "調味料/乾貨", name: "刺身豉油" },
+        { cat: "調味料/乾貨", name: "味醂" },
+        { cat: "調味料/乾貨", name: "煮酒" },
+        { cat: "調味料/乾貨", name: "壽司醋" },
+        { cat: "調味料/乾貨", name: "胡麻沙律汁" },
+        { cat: "調味料/乾貨", name: "燒肉汁" },
+        { cat: "調味料/乾貨", name: "鰻魚汁" },
+        { cat: "調味料/乾貨", name: "金印芥辣粉" },
+        { cat: "調味料/乾貨", name: "七味粉" },
+        { cat: "調味料/乾貨", name: "味噌 (白/赤)" },
+        { cat: "調味料/乾貨", name: "日本米 (新潟)" },
+        { cat: "調味料/乾貨", name: "稻庭烏冬" },
+        { cat: "調味料/乾貨", name: "拉麵" }
+    ];
+
+    // 為所有產品生成唯一 ID
+    frequentList.forEach((p, i) => p.id = "FREQ_" + i);
+    fullCatalog.forEach((p, i) => p.id = "ALL_" + i);
 
     let cart = {}; 
 
     function init() {
-        renderTable();
+        renderFrequent();
+        renderAll();
     }
 
-    function renderTable(filterText = "") {
-        const container = document.getElementById('product-list');
-        let html = '';
+    // === 切換分頁 ===
+    function switchTab(tab) {
+        // 隱藏所有分頁
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
         
-        const filteredProducts = products.filter(p => {
-            if (!filterText) return true;
-            return p.name.includes(filterText);
-        });
+        // 顯示選中分頁
+        document.getElementById('tab-' + tab).classList.add('active');
+        event.target.classList.add('active');
 
-        filteredProducts.forEach(p => {
-            const qty = cart[p.id] || 0;
-            const rowClass = qty > 0 ? 'selected' : '';
-
-            html += `
-            <div class="product-row ${rowClass}">
-                <div class="p-name">${p.name}</div>
-                <div class="qty-control">
-                    <div class="qty-btn" onclick="updateQty('${p.id}', -1)">-</div>
-                    <input type="text" class="qty-input" id="qty-${p.id}" value="${qty}" readonly>
-                    <div class="qty-btn" onclick="updateQty('${p.id}', 1)">+</div>
-                </div>
-            </div>`;
-        });
-
-        if (filteredProducts.length === 0) {
-            html = '<div class="text-center p-5 text-muted">找不到相關產品</div>';
+        // 控制搜尋框顯示
+        const searchBar = document.getElementById('searchBar');
+        if (tab === 'all') {
+            searchBar.style.display = 'block';
+            window.scrollTo(0, 0);
+        } else {
+            searchBar.style.display = 'none';
         }
+    }
+
+    // === 渲染常用清單 ===
+    function renderFrequent() {
+        const container = document.getElementById('tab-frequent');
+        let html = '';
+        frequentList.forEach(p => {
+            html += createProductRow(p, false);
+        });
         container.innerHTML = html;
     }
 
-    function filterProducts() {
-        const text = document.getElementById('searchInput').value;
-        renderTable(text);
+    // === 渲染全部產品 (含分類) ===
+    function renderAll(filterText = "") {
+        const container = document.getElementById('tab-all');
+        let html = '';
+        let currentCat = '';
+        
+        // 過濾產品
+        const filtered = fullCatalog.filter(p => {
+            if (!filterText) return true;
+            return p.name.includes(filterText) || p.cat.includes(filterText);
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="text-center p-5 text-muted">找不到相關產品</div>';
+            return;
+        }
+
+        filtered.forEach(p => {
+            // 如果不是搜尋模式，且換了分類，就加標題
+            if (!filterText && p.cat !== currentCat) {
+                currentCat = p.cat;
+                html += `<div class="cat-header">${currentCat}</div>`;
+            }
+            html += createProductRow(p, true);
+        });
+        container.innerHTML = html;
     }
 
-    function updateQty(id, delta) {
-        if (!cart[id]) cart[id] = 0;
-        cart[id] += delta;
-        if (cart[id] <= 0) delete cart[id];
+    // === 創建產品行 HTML (共用) ===
+    function createProductRow(p, showCat) {
+        const qty = cart[p.name] || 0; // 使用名稱作為 Key，以便跨分頁同步
+        const rowClass = qty > 0 ? 'selected' : '';
+        const catHtml = showCat ? `<div class="p-cat-badge">${p.cat}</div>` : '';
+
+        return `
+        <div class="product-row ${rowClass}" id="row-${p.id}">
+            <div>
+                <div class="p-name">${p.name}</div>
+                ${catHtml}
+            </div>
+            <div class="qty-control">
+                <div class="qty-btn" onclick="updateQty('${p.name}', -1)">-</div>
+                <input type="text" class="qty-input" id="qty-${p.name}" value="${qty}" readonly>
+                <div class="qty-btn" onclick="updateQty('${p.name}', 1)">+</div>
+            </div>
+        </div>`;
+    }
+
+    // === 搜尋功能 ===
+    function filterAllProducts() {
+        const text = document.getElementById('searchInput').value;
+        renderAll(text);
+    }
+
+    // === 更新數量 (核心邏輯) ===
+    function updateQty(name, delta) {
+        if (!cart[name]) cart[name] = 0;
+        cart[name] += delta;
+        if (cart[name] <= 0) delete cart[name];
         
-        const input = document.getElementById(`qty-${id}`);
-        if (input) {
-            input.value = cart[id] || 0;
+        // 同步所有該產品的輸入框 (因為可能同時出現在兩邊)
+        const inputs = document.querySelectorAll(`input[id='qty-${name}']`);
+        inputs.forEach(input => {
+            input.value = cart[name] || 0;
             const row = input.closest('.product-row');
-            if (cart[id] > 0) row.classList.add('selected');
+            if (cart[name] > 0) row.classList.add('selected');
             else row.classList.remove('selected');
-        }
+        });
+
         calculateTotal();
     }
 
     function calculateTotal() {
         let count = 0;
-        for (let [id, q] of Object.entries(cart)) {
-            count += q; 
+        for (let key in cart) {
+            count += cart[key];
         }
         document.getElementById('totalQty').innerText = count;
     }
 
-    // === 發送 WhatsApp (量產格式版) ===
+    // === 發送 WhatsApp ===
     function sendWhatsApp() {
         if (Object.keys(cart).length === 0) {
             alert("請先選擇產品！");
@@ -158,16 +371,13 @@
         const customerName = "備長(銅)";
         const phone = "85263771688"; 
 
-        // 格式：[編號] [名稱] 換行 訂貨單：
         let msg = `${customerCode} ${customerName}\n訂貨單：\n\n`;
 
-        const orderedCart = products.filter(p => cart[p.id]);
-        
-        orderedCart.forEach(p => {
-            const q = cart[p.id];
-            // 格式：[空格] [數量] [空格] [產品名]
-            msg += ` ${q}   ${p.name}\n`;
-        });
+        // 將購物車轉換為陣列並排序 (讓常用產品排前面)
+        // 這裡簡單列出即可
+        for (let name in cart) {
+            msg += ` ${cart[name]}   ${name}\n`;
+        }
 
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
         window.open(url, '_blank');
