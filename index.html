@@ -13,68 +13,78 @@
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f8f9fa; padding-bottom: 120px; }
         
-        /* === 1. 頂部固定區域 (包含標題、分頁、搜尋) === */
+        /* === 1. 頂部固定區域 === */
         .sticky-header-container {
             position: sticky;
             top: 0;
             z-index: 1020;
-            background-color: #212529; /* 深色背景 */
+            background-color: #212529; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        /* 店鋪資訊 */
         .top-info { padding: 12px 15px 5px 15px; color: white; }
         .client-name { font-size: 1.3rem; font-weight: 800; color: #ffc107; }
         
-        /* 分頁按鈕 */
         .nav-tabs { border-bottom: none; padding: 0 10px; }
         .nav-link { color: #aaa; font-weight: bold; border: none; border-radius: 10px 10px 0 0; padding: 10px 15px; font-size: 1rem; background: transparent; }
         .nav-link.active { background-color: #f8f9fa; color: #000; border-bottom: 4px solid #ffc107; }
         
-        /* 搜尋框 (整合在固定區域內) */
-        .search-section { background-color: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #ddd; display: none; } /* 預設隱藏 */
+        .search-section { background-color: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #ddd; display: none; }
         .search-input { border-radius: 20px; border: 1px solid #ccc; padding: 8px 15px; width: 100%; }
 
-        /* === 2. 產品列表樣式 === */
-        /* 分類標題 (改進：顯眼黃底) */
+        /* === 2. 產品列表 === */
+        /* 分類標題 (黃底黑字) */
         .cat-header { 
-            background-color: #ffc107; /* 黃底 */
-            color: #000; /* 黑字 */
+            background-color: #ffc107; 
+            color: #000; 
             font-weight: 800; 
             padding: 8px 15px; 
             margin-top: 0; 
-            font-size: 1.15rem; 
-            letter-spacing: 1px;
-            border-bottom: 2px solid #000;
+            font-size: 1.1rem; 
+            border-bottom: 1px solid #e0a800;
         }
 
         .product-row { background: white; border-bottom: 1px solid #eee; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
         .p-name { font-size: 1.1rem; font-weight: 700; color: #000; line-height: 1.3; }
         .p-code { font-size: 0.85rem; color: #888; font-weight: normal; margin-left: 5px; }
         
-        /* 數量按鈕 */
         .qty-control { display: flex; align-items: center; background: #fff; border: 1px solid #ced4da; border-radius: 8px; width: 115px; justify-content: space-between; height: 38px; flex-shrink: 0; }
         .qty-btn { width: 35px; height: 100%; border-radius: 6px; background: #f8f9fa; color: #212529; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; user-select: none; }
         .qty-btn:active { background: #ffc107; }
         .qty-input { width: 40px; text-align: center; border: none; font-weight: bold; font-size: 1.1rem; color: #333; background: transparent; padding: 0; }
         
-        /* 選中高亮 */
         .product-row.selected { background-color: #fff9db; border-left: 5px solid #ffc107; }
 
-        /* === 3. 底部結帳欄 (改進：增加查看按鈕) === */
+        /* === 3. 底部結帳欄 (優化按鈕邏輯) === */
         .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -4px 15px rgba(0,0,0,0.15); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1030; gap: 10px; }
         
         .total-box { font-size: 1.1rem; font-weight: bold; color: #333; }
         .total-num { color: #d32f2f; font-size: 1.4rem; padding: 0 3px; }
 
-        .btn-view-cart { background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 50px; font-weight: bold; font-size: 0.95rem; white-space: nowrap; }
+        /* 查看按鈕 - 預設灰色 */
+        .btn-view-cart { 
+            background-color: #6c757d; 
+            color: white; 
+            border: none; 
+            padding: 10px 18px; 
+            border-radius: 50px; 
+            font-weight: bold; 
+            font-size: 0.95rem; 
+            white-space: nowrap; 
+            transition: all 0.3s ease;
+        }
+        /* 查看按鈕 - 激活狀態 (橙紅色) */
+        .btn-view-cart.active {
+            background: linear-gradient(45deg, #ff9800, #ff5722);
+            box-shadow: 0 4px 12px rgba(255, 87, 34, 0.4);
+            transform: scale(1.05);
+        }
+
         .btn-whatsapp { background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; font-size: 1.1rem; flex-grow: 1; display: flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
 
-        /* 顯示控制 */
         .tab-content { display: none; padding-top: 10px; }
         .tab-content.active { display: block; }
         
-        /* Modal 調整 */
         .modal-header { background-color: #212529; color: white; }
         .modal-title { font-weight: bold; color: #ffc107; }
     </style>
@@ -106,17 +116,14 @@
     </div>
 </div>
 
-<div id="tab-frequent" class="tab-content active">
-    </div>
-
-<div id="tab-all" class="tab-content">
-    </div>
+<div id="tab-frequent" class="tab-content active"></div>
+<div id="tab-all" class="tab-content"></div>
 
 <div class="bottom-bar">
     <div class="total-box">
         共 <span id="totalQty" class="total-num">0</span> 件
     </div>
-    <button class="btn-view-cart" onclick="openCartModal()">
+    <button id="viewCartBtn" class="btn-view-cart" onclick="openCartModal()" disabled>
         <i class="bi bi-cart3"></i> 查看已選
     </button>
     <button class="btn-whatsapp" onclick="sendWhatsApp()">
@@ -131,8 +138,7 @@
                 <h5 class="modal-title">已選產品清單</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="cartModalBody">
-                </div>
+            <div class="modal-body" id="cartModalBody"></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">繼續選購</button>
                 <button type="button" class="btn btn-success" onclick="sendWhatsApp()">確認發送</button>
@@ -144,26 +150,14 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // === 1. 常用清單 (15樣) ===
+    // === 1. 常用清單 ===
     const frequentList = [
-        { name: "大葉" },
-        { name: "鮪魚腩碎(築地)" },
-        { name: "活赤貝" },
-        { name: "赤身A (日本)" },
-        { name: "三文魚籽醬油漬(大粒)" },
-        { name: "日本中TORO" },
-        { name: "日本壽司蛋" },
-        { name: "大崎蟹柳" },
-        { name: "鮮三文魚(條)" },
-        { name: "日本紋甲" },
-        { name: "加拿大海膽" },
-        { name: "壽司白薑" },
-        { name: "壽司紫菜" },
-        { name: "秘制肥腸" },
-        { name: "迷你食用玫瑰" }
+        { name: "大葉" }, { name: "鮪魚腩碎(築地)" }, { name: "活赤貝" }, { name: "赤身A (日本)" }, { name: "三文魚籽醬油漬(大粒)" },
+        { name: "日本中TORO" }, { name: "日本壽司蛋" }, { name: "大崎蟹柳" }, { name: "鮮三文魚(條)" }, { name: "日本紋甲" },
+        { name: "加拿大海膽" }, { name: "壽司白薑" }, { name: "壽司紫菜" }, { name: "秘制肥腸" }, { name: "迷你食用玫瑰" }
     ];
 
-    // === 2. 完整報價單 (已按您提供的文字整理) ===
+    // === 2. 完整報價單 ===
     const fullCatalog = [
         { cat: "環球海膽", items: ["膠盒海膽 (A06F)", "加拿大海膽 (A03)", "澳洲海膽 (A08)", "練海膽醬 (C59)", "凍海膽漿 (D01)", "紫海膽(膠盒) (A07C)", "墨西哥海膽 (A12A)", "墨西哥海膽10格 (A12B)", "本地海膽 (A02)", "凍熟馬糞膽 (A06E)"] },
         { cat: "日本海膽", items: ["A Grade(直排) (AJ1)", "A Grade(亂排) (AJ4)", "B Grade(亂排) (AJ3)", "鹽水海膽 (AJ6)"] },
@@ -195,18 +189,15 @@
         { cat: "伴碟/乾貨/工具", items: ["軍艦紫菜50片 (C18A)", "壽司紫菜50片 (C18C)", "神戶切絲紫菜 (C18E)", "單翼手捲海苔 (C18F)", "日出昆布 (C57)", "碎海草 (C10A)", "海苔粉 (C18G)", "紫菜杯 (C18J)", "日高昆布 (C57A)", "山形膠葉 (C01B)", "櫻花蝦乾500g (C03)", "櫻花蝦乾90g (C03A)", "醫用丁晴手套 S (C50BA)", "醫用丁晴手套 M (C50BB)", "醫用丁晴手套 L (C50BC)", "保鮮綿紙M (C70)", "914保鮮紙 (C914SC)", "912保鮮紙 (C912SC)", "910保鮮紙 (C910SC)", "613錫紙 (C613)", "3寸木皮船 (C04C)", "手套S (C50AA)", "手套M (C50AB)", "天婦羅紙 (C43A)", "木盒 (C07)", "細木盒 (C07A)", "日本JFDA消毒酒精 (C50D)"] }
     ];
 
-    // 初始化購物車
     let cart = {}; 
-    let cartModal = null; // 儲存 Modal 實例
+    let cartModal = null; 
 
     function init() {
         renderFrequent();
         renderAll();
-        // 初始化 Bootstrap Modal
         cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
     }
 
-    // === 切換分頁 ===
     function switchTab(tab) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
@@ -214,17 +205,26 @@
         document.getElementById('tab-' + tab).classList.add('active');
         event.target.classList.add('active');
 
-        // 控制搜尋框顯示
         const searchBar = document.getElementById('searchBar');
         if (tab === 'all') {
             searchBar.style.display = 'block';
-            window.scrollTo(0, 0); // 回到頂部
+            window.scrollTo(0, 0); 
         } else {
             searchBar.style.display = 'none';
         }
     }
 
-    // === 渲染常用清單 ===
+    // === 產品 ID 生成 (修復 Bug 的核心) ===
+    // 使用簡單的 hash 算法生成唯一 ID，確保中文也能生成唯一碼
+    function generateId(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = (hash << 5) - hash + str.charCodeAt(i);
+            hash |= 0; 
+        }
+        return "id_" + Math.abs(hash);
+    }
+
     function renderFrequent() {
         const container = document.getElementById('tab-frequent');
         let html = '';
@@ -234,24 +234,20 @@
         container.innerHTML = html;
     }
 
-    // === 渲染全部產品 ===
     function renderAll(filterText = "") {
         const container = document.getElementById('tab-all');
         let html = '';
         
         fullCatalog.forEach(category => {
-            // 過濾邏輯
             const filteredItems = category.items.filter(item => {
                 if (!filterText) return true;
                 return item.toUpperCase().includes(filterText.toUpperCase()) || category.cat.includes(filterText);
             });
 
             if (filteredItems.length > 0) {
-                // 如果不是搜尋狀態，顯示分類標題
                 if (!filterText) {
                     html += `<div class="cat-header">${category.cat}</div>`;
                 }
-                
                 filteredItems.forEach(itemName => {
                     html += createProductRow(itemName, null);
                 });
@@ -264,10 +260,7 @@
         container.innerHTML = html;
     }
 
-    // === 創建產品行 HTML ===
     function createProductRow(fullName, cat) {
-        // 分離名稱和代碼
-        // 假設格式為 "產品名稱 (CODE)"，如果沒有括號則全部為名稱
         let displayName = fullName;
         let displayCode = "";
         
@@ -277,8 +270,7 @@
             displayCode = match[2];
         }
 
-        // 使用完整名稱生成唯一ID
-        const safeId = fullName.replace(/[^a-zA-Z0-9]/g, '');
+        const safeId = generateId(fullName); // 使用新的 ID 生成器
         const qty = cart[fullName] || 0;
         const rowClass = qty > 0 ? 'selected' : '';
 
@@ -289,32 +281,28 @@
                 ${displayCode ? `<div class="p-code">${displayCode}</div>` : ''}
             </div>
             <div class="qty-control">
-                <div class="qty-btn" onclick="updateQty('${fullName}', -1)">-</div>
+                <div class="qty-btn" onclick="updateQty('${fullName.replace(/'/g, "\\'")}', -1)">-</div>
                 <input type="text" class="qty-input" id="qty-${safeId}" value="${qty}" readonly>
-                <div class="qty-btn" onclick="updateQty('${fullName}', 1)">+</div>
+                <div class="qty-btn" onclick="updateQty('${fullName.replace(/'/g, "\\'")}', 1)">+</div>
             </div>
         </div>`;
     }
 
-    // === 搜尋功能 ===
     function filterAllProducts() {
         const text = document.getElementById('searchInput').value;
         renderAll(text);
     }
 
-    // === 更新數量 (核心邏輯) ===
     function updateQty(name, delta) {
         if (!cart[name]) cart[name] = 0;
         cart[name] += delta;
         if (cart[name] <= 0) delete cart[name];
         
-        const safeId = name.replace(/[^a-zA-Z0-9]/g, '');
+        const safeId = generateId(name);
         
-        // 更新所有同名產品的 Input 數值 (包括 Modal 裡的)
         const inputs = document.querySelectorAll(`input[id='qty-${safeId}']`);
         inputs.forEach(input => {
             input.value = cart[name] || 0;
-            // 更新行樣式 (Modal 裡的行不需要 selected class)
             const row = input.closest('.product-row');
             if (row && !row.classList.contains('modal-row')) {
                 if (cart[name] > 0) row.classList.add('selected');
@@ -324,7 +312,6 @@
 
         calculateTotal();
         
-        // 如果 Modal 開啟中，即時更新 Modal 內容 (如果是刪除到0，可能需要重繪，這裡簡單處理)
         if (document.getElementById('cartModal').classList.contains('show')) {
              renderCartModalItems();
         }
@@ -336,9 +323,20 @@
             count += cart[key];
         }
         document.getElementById('totalQty').innerText = count;
+
+        // 按鈕變色邏輯
+        const viewBtn = document.getElementById('viewCartBtn');
+        if (count > 0) {
+            viewBtn.classList.add('active');
+            viewBtn.disabled = false;
+            viewBtn.innerHTML = `<i class="bi bi-cart-check-fill"></i> 查看已選 (${count})`;
+        } else {
+            viewBtn.classList.remove('active');
+            viewBtn.disabled = true;
+            viewBtn.innerHTML = `<i class="bi bi-cart3"></i> 查看已選`;
+        }
     }
 
-    // === 購物車預覽 Modal ===
     function openCartModal() {
         renderCartModalItems();
         cartModal.show();
@@ -352,14 +350,12 @@
             html = '<div class="text-center p-4 text-muted">尚未選擇任何產品</div>';
         } else {
             for (let name in cart) {
-                // 這裡複用 createProductRow 邏輯，但稍微簡化
                 html += createProductRow(name, null);
             }
         }
         container.innerHTML = html;
     }
 
-    // === 發送 WhatsApp ===
     function sendWhatsApp() {
         if (Object.keys(cart).length === 0) {
             alert("請先選擇產品！");
@@ -372,17 +368,14 @@
 
         let msg = `${customerCode} ${customerName}\n訂貨單：\n\n`;
 
-        // 整理訂單順序：常用清單優先，其他在後
         const frequentNames = frequentList.map(p => p.name);
         
-        // 1. 先加入常用清單的貨
         frequentNames.forEach(fullName => {
             if (cart[fullName]) {
                 msg += formatLine(cart[fullName], fullName);
             }
         });
 
-        // 2. 再加入其他貨品
         for (let fullName in cart) {
             if (!frequentNames.includes(fullName)) {
                 msg += formatLine(cart[fullName], fullName);
@@ -393,11 +386,9 @@
         window.open(url, '_blank');
     }
 
-    // 格式化單行訊息 (隱藏代碼)
     function formatLine(qty, fullName) {
-        // 去除 (CODE)
+        // 自動過濾掉括號內的編號 (如 A06F)
         let cleanName = fullName.replace(/\s*\(.*?\)$/, '').trim();
-        // 格式： 數量   產品名
         return ` ${qty}   ${cleanName}\n`;
     }
 
