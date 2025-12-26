@@ -104,7 +104,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const customerName = "備長"; const customerCode = "W3844"; 
-    const frequentCodes = ["B01","C01","D79","D17G","D17DD","A03","D06","B14","D19ER","D60D","C27A","D19E","D39BA","C01CO","C01CH","C18A","C18C","D88FB","C01CJ","D10KC","D30D","A07C","A12A","C04","C09","C09A","C22A"];
+    const frequentCodes = ["B01","C01","D79","D17G","D17DD","A03","D06","B14","D19ER","D60D","C27A","D19E","D39BA","C01CO","C01CH","C18A","C18C","D88FB","C01CJ","D10KC","D30D","A07C","A12A","C04","C09","C09A","C13","C22A"];
     const eelProducts = ["D22J", "D22L", "D22", "D22C", "D22A", "D22D", "D22I", "D22G"];
     const weightedProducts = ["D61B", "D61C", "D18A", "D17E", "D17C", "B01", "D18"];
     const fullCatalog = [
@@ -141,8 +141,17 @@
     function init() {
         productMap = {}; 
         fullCatalog.forEach(c=>{c.items.forEach(i=>{const m=i.match(/^(.*)\s*\(([A-Za-z0-9]+)\)$/);if(m)productMap[m[2]]={fullName:i,name:m[1],code:m[2]}})});
-        renderFrequent(); renderAll();
+        loadCart(); renderFrequent(); renderAll();
         cartModal=new bootstrap.Modal(document.getElementById('cartModal')); unitModal=new bootstrap.Modal(document.getElementById('unitSelectionModal'));
+    }
+    function loadCart() {
+        const c=localStorage.getItem('orderCart_'+customerCode), u=localStorage.getItem('orderUnits_'+customerCode);
+        if(c)try{cart=JSON.parse(c)}catch(e){} if(u)try{cartUnits=JSON.parse(u)}catch(e){}
+        calcTotal();
+    }
+    function saveCart() {
+        localStorage.setItem('orderCart_'+customerCode, JSON.stringify(cart));
+        localStorage.setItem('orderUnits_'+customerCode, JSON.stringify(cartUnits));
     }
     function switchTab(t){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');event.target.classList.add('active');if(t==='all'){clearSearch();document.getElementById('searchBar').style.display='block';window.scrollTo(0,0)}else{document.getElementById('searchBar').style.display='none'}}
     function renderFrequent(){const c=document.getElementById('tab-frequent');let h='';frequentCodes.forEach(code=>{const p=productMap[code];h+=p?createProductRow(p.fullName):createProductRow(code+' (未知)')});c.innerHTML=h}
@@ -180,9 +189,9 @@
             const r=i.closest('.product-row');
             if(r&&!r.classList.contains('modal-row')){q>0?r.classList.add('selected'):r.classList.remove('selected')}
         });
-        calcTotal(); if(document.getElementById('cartModal').classList.contains('show'))renderCartModalItems();
+        calcTotal(); saveCart(); if(document.getElementById('cartModal').classList.contains('show'))renderCartModalItems();
     }
-    function clearCart(){if(Object.keys(cart).length===0)return;if(confirm("確定要清空所有已選貨品嗎？")){cart={};cartUnits={};renderFrequent();renderAll();calcTotal();renderCartModalItems()}}
+    function clearCart(){if(Object.keys(cart).length===0)return;if(confirm("確定要清空所有已選貨品嗎？")){cart={};cartUnits={};localStorage.removeItem('orderCart_'+customerCode);localStorage.removeItem('orderUnits_'+customerCode);renderFrequent();renderAll();calcTotal();renderCartModalItems()}}
     function calcTotal(){
         const count=Object.keys(cart).length; document.getElementById('totalQty').innerText=count;
         const b=document.getElementById('viewCartBtn');
@@ -206,4 +215,3 @@
 </script>
 </body>
 </html>
-
